@@ -1,14 +1,13 @@
 /**
  * @file i2c.h
- * @author inż. Jakub Jasiejko
+ * @author eng. Jakub Jasiejko
  * @date 2025-03-30
- * @brief Deklaracje funkcji I2C dla ESP32.
+ * @brief I2C function declarations for ESP32.
  *
  * @details
- * Plik nagłówkowy zawierający definicje makr oraz deklaracje funkcji służących
- * do obsługi magistrali I2C w trybie master. Udostępnia funkcje inicjalizacji,
- * odczytu i zapisu danych (zarówno 8- jak i 16-bitowych), a także funkcję
- * sterowania multiplekserem I2C PCA9548.
+ * This header contains macros and function declarations for using the ESP32
+ * I2C peripheral in master mode. It exposes initialization, 8/16-bit read and
+ * write helpers, and PCA9548 multiplexer control.
  *
  */
 
@@ -39,60 +38,60 @@
 
  
  /**
-  * @brief Inicjalizuje magistralę I2C w trybie master.
+  * @brief Initializes the I2C bus in master mode.
   *
-  * Konfiguruje piny SDA/SCL, prędkość zegara i instaluje sterownik I2C.
+  * Configures SDA/SCL pins, clock speed, and installs the I2C driver.
   */
  void initI2C(void);
  
  /**
-  * @brief Wysyła pojedynczy bajt do urządzenia I2C.
+  * @brief Writes a single byte to an I2C device.
   *
-  * @param dev_addr  7-bitowy adres urządzenia I2C
-  * @param reg_addr  Adres rejestru docelowego w urządzeniu
-  * @param data      Wartość bajtu do zapisania
-  * @return 0x00 jeśli operacja zakończona sukcesem, 0xFF w przypadku błędu
+  * @param dev_addr  7-bit device address
+  * @param reg_addr  target register address
+  * @param data      byte to write
+  * @return 0x00 on success, 0xFF on error
   */
  uint8_t i2c_write_byte(uint8_t dev_addr, uint8_t reg_addr, uint8_t data);
  
  /**
-  * @brief Odczytuje pojedynczy bajt z urządzenia I2C.
+  * @brief Reads a single byte from an I2C device.
   *
-  * @param dev_addr  7-bitowy adres urządzenia I2C
-  * @param reg_addr  Adres rejestru, z którego ma zostać odczytany bajt
-  * @param data      Wskaźnik na zmienną, do której zapisany zostanie bajt
-  * @return 0x00 jeśli odczyt zakończony sukcesem, 0xFF w przypadku błędu
+  * @param dev_addr  7-bit device address
+  * @param reg_addr  register address to read from
+  * @param data      destination buffer
+  * @return 0x00 on success, 0xFF on error
   */
  uint8_t i2c_read_byte(uint8_t dev_addr, uint8_t reg_addr, uint8_t *data);
  
  /**
-  * @brief Zapisuje 16-bitową wartość do urządzenia I2C (w jednej transakcji).
+  * @brief Writes a 16-bit value to an I2C device in a single transaction.
   *
-  * @param dev_addr  7-bitowy adres urządzenia I2C
-  * @param reg_addr  Adres początkowy rejestru (MSB)
-  * @param value     16-bitowa wartość do zapisania (kolejność: MSB, LSB)
-  * @return 0x0000 jeśli OK, 0xFFFF w przypadku błędu transmisji
+  * @param dev_addr  7-bit device address
+  * @param reg_addr  starting register address (MSB)
+  * @param value     16-bit value to write (MSB first, then LSB)
+  * @return 0x0000 on success, 0xFFFF on transmission failure
   */
  uint16_t i2c_write16(uint8_t dev_addr, uint8_t reg_addr, uint16_t value);
  
  /**
-  * @brief Odczytuje 16-bitową wartość z urządzenia I2C (w jednej transakcji).
+  * @brief Reads a 16-bit value from an I2C device in a single transaction.
   *
-  * @param dev_addr  7-bitowy adres urządzenia I2C
-  * @param reg_addr  Adres początkowy rejestru (MSB)
-  * @return Zwraca wartość 16-bitową (MSB:LSB) lub 0xFFFF w przypadku błędu
+  * @param dev_addr  7-bit device address
+  * @param reg_addr  starting register address (MSB)
+  * @return 16-bit value (MSB:LSB) or 0xFFFF on error
   */
  uint16_t i2c_read16(uint8_t dev_addr, uint8_t reg_addr);
  
  /**
-  * @brief Wybiera aktywny kanał na multiplekserze PCA9548.
+  * @brief Selects the active channel on a PCA9548 multiplexer.
   *
-  * @param channel_addr Adres 7-bitowy układu PCA9548
-  * @param bitmask      Maska bitowa określająca kanał do aktywacji (np. PCA_CH1 = 0x02)
+  * @param channel_addr 7-bit PCA9548 address
+  * @param bitmask      channel mask to activate, for example PCA_CH1 = 0x02
   *
   * @details
-  * W przypadku niepowodzenia transmisji I2C, funkcja wysyła ramkę diagnostyczną
-  * przez UART w formacie: [0xAA][0xBB][checksum], gdzie checksum to suma kontrolna.
+  * If the I2C transaction fails, the function sends a diagnostic UART frame
+  * in the format [0xAA][0xBB][checksum].
   */
  void pca9548channel(uint8_t channel_addr, uint8_t bitmask);
  
@@ -101,14 +100,14 @@
 int32_t i2c_read24(uint8_t dev_addr);
 
 /**
-  * @brief Wysyła pojedynczą komendę do urządzenia I2C (np. ADS1219).
+  * @brief Sends a single command byte to an I2C device such as ADS1219.
   *
-  * Funkcja inicjuje transmisję I²C, wysyłając sam bajt komendy (np. RESET, START, POWERDOWN, RDATA)
-  * bez podawania adresu rejestru. Używana do prostych komend sterujących w protokole ADS1219.
+  * Starts an I2C transaction that only sends a command byte such as RESET,
+  * START, POWERDOWN, or RDATA without a register address.
   *
-  * @param dev_addr Adres 7-bitowy urządzenia I2C (bez bitu R/W)
-  * @param command Bajt komendy do wysłania (np. 0x06 dla RESET)
-  * @return 0x00 jeśli komenda została poprawnie wysłana, 0xFF w przypadku błędu
+  * @param dev_addr 7-bit I2C device address without the R/W bit
+  * @param command command byte to send, for example 0x06 for RESET
+  * @return 0x00 on success, 0xFF on error
   */
 
 uint8_t i2c_send_command(uint8_t dev_addr, uint8_t command);

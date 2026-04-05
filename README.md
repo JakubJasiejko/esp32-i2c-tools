@@ -1,8 +1,8 @@
 # esp32-i2c-tools
 
-Zestaw prostych narzędzi I2C dla ESP32: inicjalizacja magistrali, odczyt i zapis 8/16/24 bitów oraz przełączanie kanałów PCA9548.
+A compact set of I2C helpers for ESP32: bus initialization, 8/16/24-bit read and write operations, and PCA9548 channel switching.
 
-## Co zawiera
+## Features
 - `initI2C()`
 - `i2c_write_byte()` i `i2c_read_byte()`
 - `i2c_write16()` i `i2c_read16()`
@@ -10,11 +10,11 @@ Zestaw prostych narzędzi I2C dla ESP32: inicjalizacja magistrali, odczyt i zapi
 - `i2c_send_command()`
 - `pca9548channel()`
 
-## Pliki
+## Files
 - `include/i2c.h`
 - `src/i2c.c`
 
-## Szybki start
+## Quick start
 ```c
 #include "i2c.h"
 
@@ -26,10 +26,10 @@ void app_main(void)
 }
 ```
 
-## Domyślna konfiguracja
+## Default configuration
 - I2C port: `I2C_NUM_0`
 - SDA: `GPIO21`
 - SCL: `GPIO22`
 - clock: `400 kHz`
 
-Pełny przykład znajdziesz w `examples/basic_usage/basic_usage.c`.
+See `examples/basic_usage/basic_usage.c` for a complete example.
