@@ -1,6 +1,6 @@
 /**
  * @file i2c.h
- * @author eng. Jakub Jasiejko
+ * @author Jakub Jasiejko
  * @date 2025-03-30
  * @brief I2C function declarations for ESP32.
  *

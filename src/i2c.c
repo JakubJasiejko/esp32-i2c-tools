@@ -1,6 +1,6 @@
 /**
  * @file i2c.c
- * @author eng. Jakub Jasiejko
+ * @author Jakub Jasiejko
  * @date 2025-03-30
  * @brief Basic I2C master implementation for ESP32.
  *
